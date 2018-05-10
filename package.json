@@ -1,0 +1,11 @@
+{
+  "name": "mqtt_linda",
+  "version": "1.0.0",
+  "description": "the Linda system using mqtt protocol",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ryusei Sajiki",
+  "license": "ISC"
+}
