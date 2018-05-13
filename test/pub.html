@@ -1,0 +1,29 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+</head>
+<body>
+<script>
+    var client = mqtt.connect({
+        host: 'localhost',
+        port: 1883,
+        clientId: 'http.publisher'
+    });
+
+    client.on('message', function (topic, message) {
+        // message is Buffer
+        console.log(message.toString());
+    });
+    function doPublish(){
+        client.publish('topic0', Date.now().toString());
+    }
+</script>
+
+<button id='buttonPublish' onclick='doPublish'>[発行する]</button>
+
+<script>
+</script>
+</body>
+</html>
