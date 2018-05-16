@@ -1,5 +1,7 @@
-const mosca = require("mosca");
-const mongoose = require("mongoose");
+import mosca from "mosca";
+import mongoose from "mongoose";
+import express from "express";
+import http from 'http';
 
 import {TupleModel} from "./model";
 
@@ -15,40 +17,40 @@ mongoose.connect(mongoURI, () => {
 });
 
 
-const server = new mosca.Server(settings);
+const app = express();
+const httpServer = http.createServer(app);
 
-server.on('ready', function () {
+const mqttServer = new mosca.Server(settings);
+
+mqttServer.on('ready', function () {
     console.log('Server is ready.');
 });
 
-server.on('clientConnected', function (client) {
+mqttServer.on('clientConnected', function (client) {
     console.log('broker.on.connected.', 'client:', client.id);
 });
 
-server.on('clientDisconnected', function (client) {
+mqttServer.on('clientDisconnected', function (client) {
     console.log('broker.on.disconnected.', 'client:', client.id);
 });
 
-server.on('subscribed', function (topic, client) {
+mqttServer.on('subscribed', function (topic, client) {
     console.log('broker.on.subscribed.', 'client:', client.id, 'topic:', topic);
 });
 
-server.on('unsubscribed', function (topic, client) {
+mqttServer.on('unsubscribed', function (topic, client) {
     console.log('broker.on.unsubscribed.', 'client:', client.id);
 });
 
-server.on('published', function (packet, client) {
-
+mqttServer.on('published', function (packet, client) {
 
     if (/\/new\//.test(packet.topic)) {
         return;
     } else if (/\/disconnect\//.test(packet.topic)) {
         return;
     } else {
-        console.log(client);
-        console.log(packet);
+        console.log('broker.on.published.', 'client:', client.id);
         let mes = JSON.parse(packet.payload.toString('UTF-8'));
-        console.log('message= ' + mes.name);
         let tuple = new TupleModel({
             data: mes,
             publisher: client.id,
@@ -61,5 +63,8 @@ server.on('published', function (packet, client) {
             }
         });
     }
-    //console.log('broker.on.published.', 'client:', client.id);
+
 });
+
+mqttServer.attachHttpServer(httpServer);
+httpServer.listen(3000);

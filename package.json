@@ -5,13 +5,15 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build":"babel src --out-dir dist",
-    "watch":"babel src --watch --out-dir dist",
+    "build": "babel src --out-dir dist",
+    "watch": "babel src --watch --out-dir dist",
     "start": "node dist/server.js"
   },
   "author": "Ryusei Sajiki",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.16.3",
+    "http": "0.0.0",
     "mongoose": "^5.1.0",
     "mosca": "^2.8.1"
   },
