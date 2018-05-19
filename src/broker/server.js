@@ -47,7 +47,6 @@ app.use(function(err, req, res, next) {
 });
 
 
-
 const mqttServer = new mosca.Server(settings);
 
 mqttServer.on('ready', function () {

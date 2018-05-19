@@ -1,4 +1,4 @@
-import mqttLindaClient from './linda_adapter';
+import mqttLindaClient from '../lib/mqtt-linda';
 
 
 const linda = new mqttLindaClient();

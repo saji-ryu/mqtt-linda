@@ -6,7 +6,7 @@
 <body>
 <script>
     const client = mqtt.connect('mqtt://localhost:3000');
-    client.subscribe("test");
+    client.subscribe("masuilab/#");
 
     client.on("message", (topic, payload) => {
         console.log(topic, payload.toString('utf-8'));

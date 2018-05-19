@@ -1,6 +1,7 @@
 import mqtt from "mqtt";
 import 'babel-polyfill';
 
+
 export default class mqttLindaClient {
     constructor() {
         this.default_settings = {
