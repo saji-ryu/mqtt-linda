@@ -1,8 +1,10 @@
 import mqtt from "mqtt";
 import 'babel-polyfill';
 import * as JSONDiffPatch from "jsondiffpatch";
+import * as axios from "axios";
 
 const jsondiffpatch = JSONDiffPatch.create();
+
 
 export default class mqttLindaClient {
     constructor() {
@@ -11,19 +13,24 @@ export default class mqttLindaClient {
             port: 1883,
             clientId: "cl1"
         }
-        this.topic_structure = ["type", "name", "where", "who"];
+        this.topic_structure = ["type", "name", "where"];
         this.tupleSpace = "tupleSpace";
+
     }
 
-    on(state, callback) {
+    async on(state, callback) {
+        //await this.sleep();
         this.mqttClient.on(state, callback);
     }
 
-    connect(settings) {
+
+    async connect(settings) {
+        this.topic_structure = await this.get_settings();
+        console.log('this tuplespace\'s topic_structure = ' + this.topic_structure);
         if (!settings) {
             this.option = this.default_settings;
         } else {
-            this.tupleSpace = settings.topic_structure || this.topic_structure;
+            //this.topic_structure = settings.topic_structure || this.topic_structure;
             this.tupleSpace = settings.tupleSpace || this.tupleSpace;
             this.option = {
                 host: settings.host || this.default_settings.host,
@@ -31,19 +38,21 @@ export default class mqttLindaClient {
                 clientId: settings.clientId || this.default_settings.clientId
             }
         }
-        this.mqttClient = mqtt.connect(this.option);
+        await this.base_connect();
+        this.connected = true;
     }
 
-    write(write_tuple, callback) {
+    async write(write_tuple, callback) {
         console.log('written-tipic:' + this.write_transform(write_tuple));
         let ptopic = this.write_transform(write_tuple);
         this.mqttClient.publish(ptopic, JSON.stringify(write_tuple), (err) => {
+            //resolve(err, ptopic, write_tuple);
             callback(err, ptopic, write_tuple);
         });
     }
 
-    watch(read_tuple, callback) {
-        console.log(this.read_transform(read_tuple));
+    async watch(read_tuple, callback) {
+        console.log('watching-topic:' + this.read_transform(read_tuple));
         let stopic = this.read_transform(read_tuple);
         this.mqttClient.subscribe(stopic);
         this.mqttClient.on('message', (topic, message) => {
@@ -60,19 +69,21 @@ export default class mqttLindaClient {
     }
 
     read_transform(t) {
-        let tp1 = t.type ? t.type : "+";
-        let tp2 = t.name ? t.name : "+";
-        let tp3 = t.where ? t.where : "+";
-        let tp4 = t.who ? t.who : "+";
-        return this.tupleSpace + "/" + tp1 + "/" + tp2 + "/" + tp3 + "/" + tp4;
+        let topic_str = this.tupleSpace;
+        for (let p of this.topic_structure) {
+            topic_str += "/";
+            topic_str += t[p] ? t[p] : "+";
+        }
+        return topic_str;
     }
 
     write_transform(t) {
-        let tp1 = t.type ? t.type : "?";
-        let tp2 = t.name ? t.name : "?";
-        let tp3 = t.where ? t.where : "?";
-        let tp4 = t.who ? t.who : "?";
-        return this.tupleSpace + "/" + tp1 + "/" + tp2 + "/" + tp3 + "/" + tp4;
+        let topic_str = this.tupleSpace;
+        for (let p of this.topic_structure) {
+            topic_str += "/";
+            topic_str += t[p] ? t[p] : "?";
+        }
+        return topic_str;
     }
 
     diff_condition(data, cond) {
@@ -85,4 +96,23 @@ export default class mqttLindaClient {
         }
         return result;
     }
+
+    get_settings() {
+        return new Promise((resolve, reject) => {
+            axios.get("http://localhost:3000/settings").then((mes) => {
+                console.log("get settings data from server!");
+                resolve(mes.data.topicStructure);
+            });
+        });
+    }
+
+    base_connect() {
+        return new Promise((resolve, reject) => {
+            this.mqttClient = mqtt.connect(this.option);
+            resolve();
+            // this.mqttClient.on("connect", resolve);
+            // this.mqttClient.on("error", reject);
+        })
+    }
+
 }

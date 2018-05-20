@@ -6,17 +6,18 @@ import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {TupleModel} from "./model";
-import index from "./routes/index"
+import index from "./routes/index";
+import settings from "./routes/settings";
 
 const mongoURI = 'mongodb://127.0.0.1:27017/mqtt';
-const settings = {
+const mqttsettings = {
     port: 1883
 };
 
 const app = express();
 const httpServer = http.createServer(app);
 
-app.set('views','views/');
+app.set('views', 'views/');
 app.set('view engine', 'pug');
 
 app.use(logger('dev')); //アクセスログをとる
@@ -25,18 +26,19 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static('public/'));
 
-app.use('/',index);
+app.use('/', index);
+app.use('/settings', settings)
 
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
     res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -47,7 +49,7 @@ app.use(function(err, req, res, next) {
 });
 
 
-const mqttServer = new mosca.Server(settings);
+const mqttServer = new mosca.Server(mqttsettings);
 
 mqttServer.on('ready', function () {
     console.log('Server is ready.');
@@ -77,6 +79,7 @@ mqttServer.on('published', function (packet, client) {
         return;
     } else {
         console.log('broker.on.published.', 'client:', client.id);
+        console.log(packet.topic);
         let mes = JSON.parse(packet.payload.toString('UTF-8'));
         let tuple = new TupleModel({
             data: mes,
@@ -92,7 +95,6 @@ mqttServer.on('published', function (packet, client) {
     }
 
 });
-
 
 
 mqttServer.attachHttpServer(httpServer);

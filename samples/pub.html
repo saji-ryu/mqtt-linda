@@ -12,8 +12,10 @@
         console.log(topic, payload.toString('utf-8'));
     });
 
+    let tuple = {type: "test",who: "saji",where:"delta"};
+
     function pub() {
-        client.publish("mqtt/demo", '"hello world!"');
+        client.publish("masuilab/test/test/test/saji", JSON.stringify(tuple));
     }
 
 </script>
