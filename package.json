@@ -1,21 +1,29 @@
 {
   "name": "mqtt_linda",
   "version": "1.0.0",
-  "description": "the Linda system using mqtt protocol",
-  "main": "dist/lib/mqtt-linda.js",
+  "description": "Linda implementation on mqtt",
+  "main": "./dist/lib/mqtt-linda.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test mocha --compilers js:babel-register --recursive $(find test -name '*.js')",
     "build": "babel src --out-dir dist",
     "watch": "babel src --watch --out-dir dist",
     "start": "node dist/broker/server.js"
   },
+  "bin": {
+    "linda-server": "./dist/broker/server.js"
+  },
+  "keywords": [
+    "linda",
+    "mqtt"
+  ],
   "author": "Ryusei Sajiki",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.3",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.3",
     "http": "0.0.0",
+    "jsondiffpatch": "^0.3.10",
     "mongoose": "^5.1.0",
     "morgan": "^1.9.0",
     "mosca": "^2.8.1",
@@ -24,6 +32,11 @@
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
-  }
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "intelli-espower-loader": "^1.0.1",
+    "mocha": "^5.2.0",
+    "power-assert": "^1.5.0"
+  },
+  "homepage": "https://github.com/saji-ryu/mqtt-linda"
 }

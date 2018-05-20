@@ -16,7 +16,7 @@ const settings = {
 const app = express();
 const httpServer = http.createServer(app);
 
-app.set('views','views');
+app.set('views','views/');
 app.set('view engine', 'pug');
 
 app.use(logger('dev')); //アクセスログをとる
