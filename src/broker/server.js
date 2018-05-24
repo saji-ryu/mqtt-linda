@@ -9,11 +9,12 @@ import {TupleModel} from "./model";
 import index from "./routes/index";
 import settings from "./routes/settings";
 
-const mongoURI = 'mongodb://127.0.0.1:27017/mqtt';
-const mqttsettings = {
-    port: 1883
-};
+require('dotenv').config();
 
+const mongoURI = process.env.MONGO_URI;
+const mqttsettings = {
+    port: Number(process.env.MQTT_PORT) || 1883
+};
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -32,10 +33,11 @@ app.use('/settings', settings)
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    let err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
+
 
 // error handler
 app.use(function (err, req, res, next) {
@@ -72,7 +74,6 @@ mqttServer.on('unsubscribed', function (topic, client) {
 });
 
 mqttServer.on('published', function (packet, client) {
-
     if (/\/new\//.test(packet.topic)) {
         return;
     } else if (/\/disconnect\//.test(packet.topic)) {
@@ -93,12 +94,11 @@ mqttServer.on('published', function (packet, client) {
             }
         });
     }
-
 });
 
 
 mqttServer.attachHttpServer(httpServer);
-httpServer.listen(3000);
+httpServer.listen(process.env.HTTP_PORT || 3000);
 
 mongoose.connect(mongoURI, () => {
     console.log('connected to mongo');

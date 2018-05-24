@@ -12,14 +12,13 @@ export default class mqttLindaClient {
             host: 'localhost',
             port: 1883,
             clientId: "cl1"
-        }
+        };
         this.topic_structure = ["type", "name", "where"];
         this.tupleSpace = "tupleSpace";
 
     }
 
     async on(state, callback) {
-        //await this.sleep();
         this.mqttClient.on(state, callback);
     }
 
@@ -39,11 +38,10 @@ export default class mqttLindaClient {
             }
         }
         await this.base_connect();
-        this.connected = true;
     }
 
     async write(write_tuple, callback) {
-        console.log('written-tipic:' + this.write_transform(write_tuple));
+        //console.log('written-tipic:' + this.write_transform(write_tuple));
         let ptopic = this.write_transform(write_tuple);
         this.mqttClient.publish(ptopic, JSON.stringify(write_tuple), (err) => {
             //resolve(err, ptopic, write_tuple);
@@ -110,8 +108,6 @@ export default class mqttLindaClient {
         return new Promise((resolve, reject) => {
             this.mqttClient = mqtt.connect(this.option);
             resolve();
-            // this.mqttClient.on("connect", resolve);
-            // this.mqttClient.on("error", reject);
         })
     }
 

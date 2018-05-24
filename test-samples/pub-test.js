@@ -13,8 +13,8 @@ var obj = {
 
 
 client.on('connect', function () {
-    client.subscribe('tupleSpace/samples/+/+/+');
-    client.publish('tupleSpace/samples/a/a/a', JSON.stringify(obj));
+    client.subscribe('tupleSpace/test-samples/+/+/+');
+    client.publish('tupleSpace/test-samples/a/a/a', JSON.stringify(obj));
 });
 
 client.on('message', function (topic, message) {

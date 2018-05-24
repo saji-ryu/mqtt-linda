@@ -1,11 +1,16 @@
 import express from 'express';
 
 const router = express.Router();
+require('dotenv').config();
+
+const baseTopic = process.env.TOPIC_STRUCTURE.split("/");
 
 router.get('/', (req, res) => {
+    console.log(baseTopic);
     res.send({
-        topicStructure: ["type", "name", "where","who"],
-        port:1883
+        topicStructure: baseTopic,
+        tupleSpace : process.env.TUPLE_SPACE,
+        mqttPort: process.env.MQTT_PORT,
     });
 });
 

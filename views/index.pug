@@ -8,7 +8,7 @@ html(lang="ja")
         title mqtt_linda
     body
         p Watching #{JSON.stringify(topic)}
-        div(id="main" data-topic=JSON.stringify(topic))
+        div(id="main" data-topic=JSON.stringify(topic), data-port=mqttPort)
             ul(id='content')
         script(src="front.js")
 
