@@ -7,7 +7,12 @@ html(lang="ja")
         script(src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js")
         title mqtt_linda
     body
-        p Watching #{JSON.stringify(watchTuple)}
+        h1 #{tupleSpace} / #{JSON.stringify(watchTuple)}
+        h2 write
+        p
+            button(id="write-button") #{JSON.stringify(watchTuple)}
+        p %curl -d 'tuple=#{JSON.stringify(watchTuple)}' #{httpHost}
+        h2 watch #{JSON.stringify(watchTuple)}
         div(id="main" data-topic=JSON.stringify(topic), data-port=(port), data-watch=JSON.stringify(watchTuple))
             ul(id='content')
         script(src="front.js")
