@@ -1,20 +1,25 @@
 $(function () {
-    var topic_data = $("#main").data("topic");
-    var client = mqtt.connect({
-        host:'localhost',
-        port:3000,
-        clientId:'browser-test'
+    var watchTuple = $("#main").data("watch");
+
+    let linda = new mqttLinda();
+
+    let settings = {
+        host: 'localhost',
+        port: 3000,
+        clientId: "browser",
+        tupleSpace: "masuilab"
+    };
+
+//標準的記法
+    linda.connect(settings).then(() => {
+        linda.on('connect', () => {
+            linda.watch(watchTuple, (topic, data) => {
+                console.log("get data :" + JSON.stringify(data));
+                $('<li>' + JSON.stringify(data) + '</li>').prependTo('#content').hide().fadeIn(500);
+            });
+        })
     });
 
-    topic_data = topic_data.slice(1);
-    topic_data = topic_data.slice(0,-1);
-
-    client.subscribe(topic_data);
-
-    client.on("message", function (t, p) {
-        console.log("topic=" + t + " data=" + p.toString('utf-8'));
-        $('<li>' + p.toString() + '</li>').prependTo('#content').hide().fadeIn(500);
-    });
 });
 
 
