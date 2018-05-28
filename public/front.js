@@ -6,7 +6,7 @@ $(function () {
     let settings = {
         host: 'localhost',
         port: 3000,
-        clientId: "browser",
+        clientId: "server-view",
         tupleSpace: "masuilab"
     };
 

@@ -7,7 +7,7 @@ const router = express.Router();
 const mqttClient = mqtt.connect({
     host: "localhost",
     port: process.env.MQTT_PORT,
-    clientId:"browser2"
+    clientId:"server-http-post"
 });
 
 import {pubTopicFormatter} from '../topicFormatter'
@@ -23,11 +23,8 @@ router.get('/', (req, res) => {
 
 
 router.post('/', (req, res) => {
-    // let tupleData = JSON.parse(req.body.tuple);
     let tupleData = JSON.parse(req.body.tuple);
     let pubtopic = pubTopicFormatter(tupleData);
-    console.log("tes　"+tupleData+" "+pubtopic);
-    console.log(typeof req.body.tuple);
     mqttClient.publish(pubtopic, req.body.tuple);
     res.send(tupleData);
 });
