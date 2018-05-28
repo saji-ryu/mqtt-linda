@@ -1,8 +1,7 @@
 import express from 'express';
-
-const router = express.Router();
 require('dotenv').config();
 
+const router = express.Router();
 const baseTopic = process.env.TOPIC_STRUCTURE.split("/");
 
 router.get('/', (req, res) => {

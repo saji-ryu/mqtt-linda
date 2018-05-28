@@ -6,8 +6,10 @@ import logger from 'morgan';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import {TupleModel} from "./model";
+
 import index from "./routes/index";
 import settings from "./routes/settings";
+import watchlist from "./routes/watchlist"
 
 require('dotenv').config();
 
@@ -28,7 +30,8 @@ app.use(cookieParser());
 app.use(express.static('public/'));
 
 app.use('/', index);
-app.use('/settings', settings)
+app.use('/settings', settings);
+app.use('/watch',watchlist);
 
 
 // catch 404 and forward to error handler

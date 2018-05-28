@@ -11,7 +11,6 @@ const pubTopicFormatter = (obj) => {
             topic += "/?";
         }
     }
-
     return topic;
 }
 
@@ -26,9 +25,9 @@ const subTopicFormatter = (obj) => {
             topic += "/+";
         }
     }
-
     return topic;
 }
 
 export {pubTopicFormatter};
+export {subTopicFormatter};
 
