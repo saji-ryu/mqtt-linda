@@ -3,10 +3,12 @@ $(function () {
 
     let linda = new mqttLinda();
 
+    let clid = "server-view" + Date.now().toString();
+
     let settings = {
         host: 'localhost',
         port: 3000,
-        clientId: "server-view",
+        clientId: clid,
         tupleSpace: "masuilab"
     };
 

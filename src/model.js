@@ -1,7 +1,6 @@
 //import * as mongoose from "mongoose";
 const mongoose = require("mongoose");
 
-//let Schema = mongoose.Schema;
 
 const Tuple = new mongoose.Schema({
     data: {type: Object, require: true},
@@ -10,6 +9,16 @@ const Tuple = new mongoose.Schema({
     topic: {type: String, require: true}
 });
 
+const UserState = new mongoose.Schema({
+    type: {type: String, require: true},
+    name: {type: String, require: true},
+    time: {type: Number, require: true},
+    topic: {type: String},
+    isOn: {type: Boolean, require: true}
+});
+
 let TupleModel = mongoose.model('tuple', Tuple);
+let UserStateModel = mongoose.model('user_state', UserState);
 
 export {TupleModel};
+export {UserStateModel};
