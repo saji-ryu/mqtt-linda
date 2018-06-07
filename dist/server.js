@@ -51,9 +51,11 @@ var _watchlist2 = _interopRequireDefault(_watchlist);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-require('dotenv').config();
+//require('dotenv').config();
 
-const mongoURI = process.env.MONGO_URI;
+
+const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mqtt";
+console.log(mongoURI);
 const mqttsettings = {
     port: Number(process.env.MQTT_PORT) || 1883
 };
