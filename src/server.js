@@ -42,7 +42,6 @@ app.use('/settings', settings);
 app.use('/watch', watchlist);
 
 
-
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     let err = new Error('Not Found');
@@ -69,12 +68,12 @@ mqttServer.on('ready', function () {
 });
 
 mqttServer.on('clientConnected', function (client) {
-    storeState('connect',client.id,'none',true);
+    storeState('connect', client.id, 'none', true);
     console.log('broker.on.connected.', 'client:', client.id);
 });
 
 mqttServer.on('clientDisconnected', function (client) {
-    storeState('connect',client.id,'none',false);
+    storeState('connect', client.id, 'none', false);
     console.log('broker.on.disconnected.', 'client:', client.id);
 });
 
@@ -84,7 +83,7 @@ mqttServer.on('subscribed', function (topic, client) {
         onSublist[client.id].topic = topic;
         onSublist[client.id].time = Date.now();
         publishSubscriber(client.id, 'on');
-        storeState('subscribe',client.id, topic, true);
+        storeState('subscribe', client.id, topic, true);
     }
     console.log('broker.on.subscribed.', 'client:', client.id, 'topic:', topic);
 });
@@ -93,7 +92,7 @@ mqttServer.on('unsubscribed', function (topic, client) {
     if (!isSublistMatch(client.id)) {
         delete onSublist[client.id];
         publishSubscriber(client.id, "off");
-        storeState("subscribe",client.id, topic, false);
+        storeState("subscribe", client.id, topic, false);
     }
     console.log('broker.on.unsubscribed.', 'client:', client.id);
 });
@@ -125,7 +124,7 @@ mqttServer.on('published', function (packet, client) {
 
 
 mqttServer.attachHttpServer(httpServer);
-httpServer.listen(process.env.HTTP_PORT || 3000);
+httpServer.listen(Number(process.env.HTTP_PORT) || 3000);
 
 mongoose.connect(mongoURI, () => {
     console.log('connected to mongo');

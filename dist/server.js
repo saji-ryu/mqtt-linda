@@ -157,7 +157,7 @@ mqttServer.on('published', function (packet, client) {
 });
 
 mqttServer.attachHttpServer(httpServer);
-httpServer.listen(process.env.HTTP_PORT || 3000);
+httpServer.listen(Number(process.env.HTTP_PORT) || 3000);
 
 _mongoose2.default.connect(mongoURI, () => {
     console.log('connected to mongo');
