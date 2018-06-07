@@ -14,7 +14,7 @@ import index from "./routes/index";
 import settings from "./routes/settings";
 import watchlist from "./routes/watchlist"
 
-//require('dotenv').config();
+require('dotenv').config();
 
 
 const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/mqtt";
