@@ -124,7 +124,8 @@ mqttServer.on('published', function (packet, client) {
 
 
 mqttServer.attachHttpServer(httpServer);
-httpServer.listen(Number(process.env.HTTP_PORT) || 3000);
+// httpServer.listen(Number(process.env.HTTP_PORT) || 3000);
+httpServer.listen(3000);
 
 mongoose.connect(mongoURI, () => {
     console.log('connected to mongo');
