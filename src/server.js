@@ -16,7 +16,7 @@ import watchlist from "./routes/watchlist"
 
 require('dotenv').config();
 
-const mongoURI = process.env.MONGO_URI;
+const mongoURI = process.env.MONGODB_URI || process.env.MONGO_URI;
 const mqttsettings = {
     port: Number(process.env.MQTT_PORT) || 1883
 };
