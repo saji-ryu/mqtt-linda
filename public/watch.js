@@ -5,7 +5,7 @@ $(function () {
 
     console.log(JSON.stringify(subscriber));
 
-    let linda = new mqttLinda();
+    let linda = new mqttLindaClient();
 
     let clid = "server-watch" + Date.now().toString();
 

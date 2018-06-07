@@ -1,18 +1,55 @@
-import mosca from "mosca";
-import mongoose from "mongoose";
-import express from "express";
-import http from 'http';
-import logger from 'morgan';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
+"use strict";
 
-import {TupleModel} from "./model";
-import {UserStateModel} from "./model";
-import {pubTopicFormatter} from "./topicFormatter";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.onSublist = undefined;
 
-import index from "./routes/index";
-import settings from "./routes/settings";
-import watchlist from "./routes/watchlist"
+var _mosca = require("mosca");
+
+var _mosca2 = _interopRequireDefault(_mosca);
+
+var _mongoose = require("mongoose");
+
+var _mongoose2 = _interopRequireDefault(_mongoose);
+
+var _express = require("express");
+
+var _express2 = _interopRequireDefault(_express);
+
+var _http = require("http");
+
+var _http2 = _interopRequireDefault(_http);
+
+var _morgan = require("morgan");
+
+var _morgan2 = _interopRequireDefault(_morgan);
+
+var _bodyParser = require("body-parser");
+
+var _bodyParser2 = _interopRequireDefault(_bodyParser);
+
+var _cookieParser = require("cookie-parser");
+
+var _cookieParser2 = _interopRequireDefault(_cookieParser);
+
+var _model = require("./model");
+
+var _topicFormatter = require("./topicFormatter");
+
+var _index = require("./routes/index");
+
+var _index2 = _interopRequireDefault(_index);
+
+var _settings = require("./routes/settings");
+
+var _settings2 = _interopRequireDefault(_settings);
+
+var _watchlist = require("./routes/watchlist");
+
+var _watchlist2 = _interopRequireDefault(_watchlist);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 require('dotenv').config();
 
@@ -23,23 +60,21 @@ const mqttsettings = {
 
 const sublist_exception = ["server-view", "server-http-post", "server-watch"];
 const onSublist = {};
-const app = express();
-const httpServer = http.createServer(app);
+const app = (0, _express2.default)();
+const httpServer = _http2.default.createServer(app);
 
 app.set('views', 'views/');
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(cookieParser());
-app.use(express.static('public/'));
+app.use((0, _morgan2.default)('dev'));
+app.use(_bodyParser2.default.json());
+app.use(_bodyParser2.default.urlencoded({ extended: true }));
+app.use((0, _cookieParser2.default)());
+app.use(_express2.default.static('public/'));
 
-app.use('/', index);
-app.use('/settings', settings);
-app.use('/watch', watchlist);
-
-
+app.use('/', _index2.default);
+app.use('/settings', _settings2.default);
+app.use('/watch', _watchlist2.default);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -59,20 +94,19 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-
-const mqttServer = new mosca.Server(mqttsettings);
+const mqttServer = new _mosca2.default.Server(mqttsettings);
 
 mqttServer.on('ready', function () {
     console.log('Server is ready.');
 });
 
 mqttServer.on('clientConnected', function (client) {
-    storeState('connect',client.id,'none',true);
+    storeState('connect', client.id, 'none', true);
     console.log('broker.on.connected.', 'client:', client.id);
 });
 
 mqttServer.on('clientDisconnected', function (client) {
-    storeState('connect',client.id,'none',false);
+    storeState('connect', client.id, 'none', false);
     console.log('broker.on.disconnected.', 'client:', client.id);
 });
 
@@ -82,7 +116,7 @@ mqttServer.on('subscribed', function (topic, client) {
         onSublist[client.id].topic = topic;
         onSublist[client.id].time = Date.now();
         publishSubscriber(client.id, 'on');
-        storeState('subscribe',client.id, topic, true);
+        storeState('subscribe', client.id, topic, true);
     }
     console.log('broker.on.subscribed.', 'client:', client.id, 'topic:', topic);
 });
@@ -91,7 +125,7 @@ mqttServer.on('unsubscribed', function (topic, client) {
     if (!isSublistMatch(client.id)) {
         delete onSublist[client.id];
         publishSubscriber(client.id, "off");
-        storeState("subscribe",client.id, topic, false);
+        storeState("subscribe", client.id, topic, false);
     }
     console.log('broker.on.unsubscribed.', 'client:', client.id);
 });
@@ -107,13 +141,13 @@ mqttServer.on('published', function (packet, client) {
         console.log('broker.on.published.', 'client:', client.id);
         console.log(packet.topic);
         let mes = JSON.parse(packet.payload.toString('UTF-8'));
-        let tuple = new TupleModel({
+        let tuple = new _model.TupleModel({
             data: mes,
             publisher: client.id,
             time: Date.now(),
             topic: packet.topic
         });
-        tuple.save((err) => {
+        tuple.save(err => {
             if (err) {
                 console.log(err);
             }
@@ -121,18 +155,17 @@ mqttServer.on('published', function (packet, client) {
     }
 });
 
-
 mqttServer.attachHttpServer(httpServer);
 httpServer.listen(process.env.HTTP_PORT || 3000);
 
-mongoose.connect(mongoURI, () => {
+_mongoose2.default.connect(mongoURI, () => {
     console.log('connected to mongo');
 });
 
+exports.onSublist = onSublist;
 
-export {onSublist};
 
-const isSublistMatch = (str) => {
+const isSublistMatch = str => {
     let rval = false;
     for (let i = 0; i < sublist_exception.length; i++) {
         if (str.indexOf(sublist_exception[i]) > -1) {
@@ -144,9 +177,9 @@ const isSublistMatch = (str) => {
 };
 
 const publishSubscriber = (Id, on_off) => {
-    let tuple = {type: 'sublist', value: on_off, name: Id};
+    let tuple = { type: 'sublist', value: on_off, name: Id };
     let message = {
-        topic: pubTopicFormatter(tuple),
+        topic: (0, _topicFormatter.pubTopicFormatter)(tuple),
         payload: JSON.stringify(tuple),
         qos: 0, // 0, 1, or 2
         retain: false // or true
@@ -156,7 +189,7 @@ const publishSubscriber = (Id, on_off) => {
 };
 
 const storeState = (type, name, topic, isOn) => {
-    let subscriber = new UserStateModel({
+    let subscriber = new _model.UserStateModel({
         type: type,
         name: name,
         time: Date.now(),
